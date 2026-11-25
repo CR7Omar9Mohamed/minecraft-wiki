@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minecraft Wiki — built live (mobile)</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f110f;--bg2:#171a17;--ln:#3b413b;--tx:#e8ece6;--mu:#9aa49a;--gr:#5fc34f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:auto}
+*{box-sizing:border-box}
+body{margin:0;position:relative;color:var(--tx);background:radial-gradient(#2e342e 1px,transparent 1.6px) 0 0/22px 22px,var(--bg);font:16px/1.65 system-ui,-apple-system,sans-serif;padding-bottom:120px;overflow-x:hidden}
+h1,h2,.px{font-family:'Press Start 2P',ui-monospace,monospace;font-weight:400;line-height:1.45;margin:0}
+svg.p{image-rendering:pixelated;shape-rendering:crispEdges;display:block}
+.b{opacity:0}.b.in{opacity:1;animation:pop .35s}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}}
+.in tr,.in li{animation:pop .4s both}
+.bv{background:#3b413b;border:2px solid #0b0d0b;box-shadow:inset -3px -3px #1d211d,inset 3px 3px #5a625a}
+header{display:flex;gap:12px;align-items:center;max-width:1100px;margin:0 auto;padding:16px;flex-wrap:wrap}
+.logo{display:flex;gap:10px;align-items:center;font-size:11px;padding:8px 12px}.logo svg{width:28px}
+.sr{flex:1;min-width:200px}.sr input{width:100%;background:#0b0d0b;color:var(--tx);border:2px solid var(--ln);padding:11px 12px;font:15px system-ui;outline:0;border-radius:0}
+.sr input:focus{border-color:var(--gr)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.main{display:grid;gap:24px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:800px){.main{grid-template-columns:minmax(0,1fr) 300px}.info{grid-column:2;grid-row:1;align-self:start;position:sticky;top:16px}.art{grid-column:1;grid-row:1}}
+.art>*{margin-bottom:16px}
+h1{font-size:clamp(22px,6vw,38px);color:#fff;margin-top:8px}
+h2{font-size:15px;padding-bottom:10px;border-bottom:2px solid var(--ln);margin-top:18px}
+h2.hit,p.hit{outline:2px solid var(--gr);outline-offset:6px}
+.art p{margin:0;color:#cfd6cc}
+.info{background:var(--bg2);border:2px solid var(--ln);box-shadow:6px 6px 0 #000}
+.ih{background:var(--gr);color:#07210a;padding:12px;font-size:13px;text-align:center}
+.img{padding:16px;background:#0b0d0b;display:grid;place-items:center}.img svg{width:180px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;border-top:1px solid var(--ln);text-align:left;vertical-align:middle}
+th{color:var(--mu);font-weight:600;width:34%}
+.dt{border:2px solid var(--ln);background:var(--bg2);overflow-x:auto}.dt thead th{background:#212621;color:var(--gr);font-size:12px}
+.dt td:first-child{display:flex;gap:10px;align-items:center}
+.ic svg{width:26px}
+.toc{background:var(--bg2);border:2px solid var(--ln);padding:14px 18px;display:inline-block;min-width:220px}
+.toc b{font:11px 'Press Start 2P',monospace;color:var(--gr)}.toc ol{margin:10px 0 0;padding-left:22px}
+a{color:#8fe07f;text-decoration:none}a:hover{text-decoration:underline}
+.art ul{margin:0;padding-left:20px;color:#cfd6cc}.art li{margin:6px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{display:block;padding:14px;background:var(--bg2);border:2px solid var(--ln);color:var(--tx);text-decoration:none!important;transition:.15s}
+.card:hover{border-color:var(--gr);transform:translateY(-3px)}
+.card .ic svg{width:36px;margin-bottom:10px}.card b{font:11px 'Press Start 2P',monospace;display:block;margin-bottom:6px}.card span{font-size:13px;color:var(--mu);line-height:1.4;display:block}
+footer{max-width:1100px;margin:48px auto 0;padding:20px 16px;border-top:2px solid var(--ln);color:var(--mu);font-size:13px}
+.end{text-align:center;padding:36px 16px 20px}
+#dnp{font:12px 'Press Start 2P',monospace;color:#07210a;background:var(--gr);border:3px solid #0b0d0b;padding:18px 24px;cursor:pointer;box-shadow:inset -4px -4px #3e8e34,inset 4px 4px #9be58c,0 6px 0 #000;border-radius:0}
+#dnp:active:not(:disabled){transform:translateY(4px);box-shadow:inset -4px -4px #3e8e34,inset 4px 4px #9be58c,0 2px 0 #000}
+#dnp:disabled{filter:grayscale(1) brightness(.5);cursor:not-allowed}
+.wf{position:absolute;z-index:40;border:2px dashed #4da3ff;background:#4da3ff18;pointer-events:none;width:0;height:0;transition:opacity .3s}
+.wf em{position:absolute;left:-2px;top:-2px;background:#2f7fe0;color:#fff;font:8px 'Press Start 2P',monospace;padding:3px 5px;white-space:nowrap;opacity:0;font-style:normal}
+.wf.on em{opacity:1}.wf.off{opacity:0}
+.cur{position:fixed;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}
+.cur .ar{width:16px;height:24px;display:block;filter:drop-shadow(0 2px 2px #000a)}
+.hm{position:absolute;left:8px;top:-23px;width:28px;transform-origin:50% 100%;transform:rotate(var(--t,0deg));transition:transform .25s}
+.hm svg{width:28px;height:auto}
+.hm.mv{animation:bob .45s ease-in-out infinite}
+.hm.nod{animation:nod .3s}
+@keyframes bob{50%{translate:0 -3px}}
+@keyframes nod{40%{transform:rotate(var(--t,0deg)) translateY(5px) scaleY(.8)}}
+.lb{position:absolute;left:14px;top:16px;background:var(--c);color:#000;font:7px 'Press Start 2P',monospace;padding:3px 5px;white-space:nowrap}
+.cur.wave .ar{animation:wv .35s infinite alternate;transform-origin:0 0}
+@keyframes wv{to{transform:rotate(28deg)}}
+#bar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));z-index:60;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;max-width:calc(100vw - 16px);padding:8px;background:#151815ee;border:2px solid var(--ln);box-shadow:0 6px 24px #000a;backdrop-filter:blur(6px)}
+#bar button{min-width:34px;height:34px;padding:0 8px;background:#3b413b;color:var(--tx);border:2px solid #0b0d0b;box-shadow:inset -2px -2px #1d211d,inset 2px 2px #5a625a;font:11px 'Press Start 2P',monospace;cursor:pointer;border-radius:0}
+#bar button:hover{background:#4a524a}
+#cnt{font:9px 'Press Start 2P',monospace;padding:0 6px;white-space:nowrap}#st{font:9px 'Press Start 2P',monospace;color:#07210a;background:var(--gr);padding:6px 8px}
+#intro{position:fixed;inset:0;z-index:90;background:#0a0c0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;text-align:center;padding:24px;cursor:pointer;transition:opacity .5s}
+#intro.gone{opacity:0;pointer-events:none}#intro svg{width:120px;animation:fl 2.4s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-10px) rotate(-3deg)}}
+#intro p{font:11px/1.9 'Press Start 2P',monospace;max-width:420px;margin:0}#intro small{color:var(--mu);font:9px 'Press Start 2P',monospace}
+#cr{position:fixed;left:50%;top:50%;translate:-50% -50%;width:min(60vw,260px);z-index:100;display:none}
+#cr.fl svg{filter:brightness(7) contrast(.5)}
+#fl{position:fixed;inset:0;background:#fff;z-index:110;opacity:0;pointer-events:none}
+.pc,.pt{position:fixed;z-index:95;pointer-events:none}.pc{border:2px solid #0006}
+.sc{position:fixed;z-index:1;pointer-events:none;background:radial-gradient(closest-side,#000 25%,#000b 55%,transparent);transition:opacity 1s}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:120;background:#212621;border:2px solid var(--gr);padding:10px 14px;font-size:13px}
+html{-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+button,.card,#intro{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+#bar button{min-width:40px;height:40px}
+@media(max-width:799px){
+body{padding-bottom:150px}
+.main{gap:16px}.art{display:contents}.art>*{order:3;margin-bottom:0}.art>h1{order:1}.info{order:2}
+h2{font-size:12px;margin-top:10px}.logo{font-size:9px;padding:6px 9px}.logo svg{width:22px}
+.ih{font-size:11px}.img svg{width:140px}table{font-size:13px}th,td{padding:8px 10px}
+.toc{display:block}
+#dnp{width:100%;max-width:320px;font-size:11px;padding:20px 12px}
+#bar{width:calc(100vw - 16px);gap:4px;padding:6px}#cnt{font-size:8px;padding:0 2px}#st{font-size:8px;padding:5px 6px}
+#bar button{min-width:38px;height:40px;padding:0 6px}
+.lb{font-size:6px;padding:2px 4px}#intro p{font-size:10px}
+}
+#pg{position:fixed;inset:0;z-index:55;background:radial-gradient(#2e342e 1px,transparent 1.6px) 0 0/22px 22px,var(--bg);overflow:auto;padding:16px 16px 150px;display:none}
+#pg.on{display:block;animation:pop .3s}.pgi{max-width:800px;margin:0 auto}.pgi>p{color:#cfd6cc;margin:12px 0}
+.pgb{color:var(--tx);font-size:10px;padding:12px 14px;cursor:pointer;margin-bottom:18px}
+.pgt{display:flex;gap:14px;align-items:center}.pgt svg{width:44px}.pgt h1{margin:0}
+#pg .cards{margin-top:14px}
+</style></head><body>
+<div id="intro"><div id="il"></div><p>Tap and 18 agents will build this wiki</p><small>MINECRAFT WIKI · LIVE BUILD</small></div>
+<div id="wiki">
+<header>
+<div class="b logo bv px"><i class="ic" data-i="grass"></i>MINECRAFT WIKI</div>
+<label class="b sr"><input id="q" type="search" placeholder="Search the wiki… (Enter)" aria-label="Search"></label>
+</header>
+<div class="wrap"><div class="main">
+<aside class="b info"><div class="ih px">Creeper</div><div class="img" id="cimg"></div>
+<table><tr><th>Health</th><td>20 (♥ × 10)</td></tr><tr><th>Behavior</th><td>Hostile, explodes near players</td></tr><tr><th>Drops</th><td>Gunpowder, music disc</td></tr><tr><th>Spawn</th><td>Overworld, dark areas</td></tr></table></aside>
+<article class="art">
+<h1 class="b t">Creeper</h1>
+<nav class="b toc"><b>CONTENTS</b><ol><li><a href="#overview">Overview</a></li><li><a href="#behavior">Behavior</a></li><li><a href="#drops">Drops</a></li><li><a href="#spawning">Spawning</a></li><li><a href="#trivia">Trivia</a></li></ol></nav>
+<h2 class="b t" id="overview">Overview</h2>
+<p class="b t">A creeper is a hostile mob that silently stalks players and detonates when it gets close. With its green, mottled body and four stubby legs, it is one of the most recognizable creatures in Minecraft.</p>
+<h2 class="b t" id="behavior">Behavior</h2>
+<p class="b t">Creepers approach players within about sixteen blocks. Once close enough, the fuse starts with a hiss and lasts 1.5 seconds. Back away and the fuse stops. After a lightning strike a creeper becomes charged, and its blast is twice as strong. Creepers keep away from cats and ocelots.</p>
+<h2 class="b t" id="drops">Drops</h2>
+<div class="b dt"><table><thead><tr><th>Item</th><th>Amount</th><th>Condition</th></tr></thead>
+<tr><td><i class="ic" data-i="gun"></i>Gunpowder</td><td>0–2</td><td>Any death</td></tr>
+<tr><td><i class="ic" data-i="disc"></i>Music disc</td><td>1</td><td>Killed by a skeleton</td></tr>
+<tr><td><i class="ic" data-i="cr"></i>Mob head</td><td>1</td><td>Killed by a charged creeper blast</td></tr></table></div>
+<h2 class="b t" id="spawning">Spawning</h2>
+<p class="b t">Creepers spawn in dark areas of the Overworld, on solid blocks, in caves, forests and at night on the surface. Lighting up your base with torches keeps them from appearing nearby.</p>
+<h2 class="b t" id="trivia">Trivia</h2>
+<ul class="b"><li>The creeper was born from a bug, when its creator mixed up height and width values while making a pig model.</li><li>Its explosion damages terrain but cannot break bedrock.</li><li>It has no arms, so it can only hurt you by going boom.</li></ul>
+<h2 class="b t">Explore the wiki</h2>
+<div class="cards">
+<a class="b card" href="#" data-l="Blocks"><i class="ic" data-i="cube"></i><b>Blocks</b><span>Every cube in the world</span></a>
+<a class="b card" href="#" data-l="Mobs"><i class="ic" data-i="cr"></i><b>Mobs</b><span>Friends, foes and creepers</span></a>
+<a class="b card" href="#" data-l="Items"><i class="ic" data-i="sword"></i><b>Items</b><span>Tools, weapons and food</span></a>
+<a class="b card" href="#" data-l="Biomes"><i class="ic" data-i="tree"></i><b>Biomes</b><span>Deserts to the deep dark</span></a>
+<a class="b card" href="#" data-l="Redstone"><i class="ic" data-i="dust"></i><b>Redstone</b><span>Wire up machines</span></a></div>
+</article></div></div>
+<footer class="b">Fan-made demo inspired by minecraft.wiki. Not affiliated with Mojang or Microsoft. Text is original. Built live by 18 tiny agents.</footer>
+<div class="end"><button class="b" id="dnp" disabled>Do not press</button></div>
+</div>
+<div id="pg"></div><div id="cr"></div><div id="fl"></div>
+<div id="bar"><span id="cnt">0 / 108 layers</span><span id="st">Ready</span><button id="pp" title="Play/pause">❚❚</button><button id="sp" title="Speed">1x</button><button id="sn" title="Sound">🔊</button><button id="sk" title="Skip">⏭</button><button id="rp" title="Replay">⟲</button></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],sl=ms=>new Promise(r=>setTimeout(r,ms));
+const P=(pat,pal,seed=1)=>{const rows=pat.split('/');let s=`<svg class="p" viewBox="0 0 ${rows[0].length} ${rows.length}" xmlns="http://www.w3.org/2000/svg">`,h=seed;rows.forEach((row,y)=>[...row].forEach((c,x)=>{const a=pal[c];if(!a)return;h=(h*9301+49297)%233280;const col=Array.isArray(a)?a[h%a.length]:a;s+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col}"/>`}));return s+'</svg>'};
+const CR='GGGGGGGG/GKKGGKKG/GKKGGKKG/GGGKKGGG/GGKKKKGG/GGKKKKGG/GGKGGKGG/GGGGGGGG',CP={G:['#4caf3f','#5fc34f','#3e8e34','#76d062','#2f7a2b'],K:'#0b0d0b'};
+const HP='...oooooo.../..oHHHHHhso./.oHHhhhhhhso/oHHhhhhhhhso/oHhhhhhhhhso/oHhhhhhhhhso/oHhso..ohhso/oHhso..ohhso/ooooo..ooooo';
+const m=(o,H,h,s)=>({o,H,h,s});
+const HM=[m('#3b2314','#c68a58','#9c6238','#6e4222'),m('#2e2e2e','#c4c4c4',['#9a9a9a','#7c7c7c','#8c8c8c'],'#505050'),m('#3d3d3d','#ffffff','#d8d8d8','#9a9a9a'),m('#5a3d08','#fff6a0','#f5d742','#c99a12'),m('#0e4a45','#c2fff5','#3ee0d0','#1d9a8a'),m('#150f13','#8a7a85','#4d4147','#2a2227')];
+const GP={g:['#5fc34f','#4caf3f','#6dd05c'],G:['#3e8e34','#4a7a35'],d:['#7a5a3a','#6b4a2e','#85633f'],D:'#5a3d24'};
+const IC={grass:['gggggggg/gGgggGgg/dgdggdgd/dddddddd/ddDdddDd/dddddddd/dDdddddd/dddddddd',GP],
+cr:[CR,CP],
+gun:['......../..a...../.aab.a../.abbaab./aabbbbaa/abbbbbba/.aaaaaa./........',{a:['#555','#666'],b:['#8a8a8a','#9a9a9a','#777']}],
+disc:['..rrrr../.rrrrrr./rrr..rrr/rr.KK.rr/rr.KK.rr/rrr..rrr/.rrrrrr./..rrrr..',{r:['#d6453d','#bd3a33'],K:'#111'}],
+cube:['..tttt../.tttttt./tttttttt/llllrrrr/llllrrrr/llllrrrr/.lllrrr./..llrr..',{t:['#6dd05c','#5fc34f'],l:'#7a5a3a',r:'#5a3d24'}],
+sword:['......ss/.....sss/....sss./s..sss../ss.ss.../.sss..../.hs...../h..h....',{s:['#bff','#8ee'],h:'#7a5a3a'}],
+tree:['..gggg../.gggggg./gggggggg/.gggggg./...bb.../...bb.../...bb.../..bbbb..',{g:['#3e8e34','#4caf3f'],b:'#6b4a2e'}],
+dust:['......../..r..r../.rRrrRr./..rRRr../.rRrrRr./..r..r../......../........',{r:'#c1201c',R:'#ff4a3d'}]};
+$$('i[data-i]').forEach(e=>{const[a,b]=IC[e.dataset.i];e.innerHTML=P(a,b,3)});
+$('#il').innerHTML=P(...IC.grass,5);$('#cimg').innerHTML=P(CR,CP,7);
+$$('.t').forEach(e=>e.dataset.f=e.textContent);
+const R=['color','layout','pixels','type','copy','motion','icons','grid','infobox','tables','links','search','sound','nav','footer','polish','a11y','qa'];
+let sp=1,pa=false,snd=true,tok=0,skip=false,done=0,N=1,building=false,bz=false,A,cs=[];
+const TOT=108,cnt=$('#cnt'),st=$('#st'),btn=$('#dnp');
+const setL=n=>cnt.textContent=n+' / '+TOT+' layers',status=s=>st.textContent=s,tick=()=>{done++;setL(Math.min(TOT,Math.round(done/(2*N)*TOT)))};
+const wait=ms=>new Promise((ok,no)=>{const my=tok;let t=0;(function f(){if(my!==tok)return no('x');if(skip)return ok();if(!pa)t+=16*sp;t>=ms?ok():setTimeout(f,16)})()});
+/* sound */
+const ac=()=>{A=A||new(window.AudioContext||window.webkitAudioContext)();if(A.state=='suspended')A.resume();return A};
+function tone(f,d,ty='square',v=.06,to=0){if(!snd)return;try{const a=ac(),t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start();o.stop(t+d)}catch(e){}}
+function noise(d,ty,f0,f1,v){if(!snd)return;try{const a=ac(),t=a.currentTime,n=a.sampleRate*d|0,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=Math.random()*2-1;const s=a.createBufferSource();s.buffer=b;const fl=a.createBiquadFilter();fl.type=ty;fl.frequency.setValueAtTime(f0,t);fl.frequency.exponentialRampToValueAtTime(f1,t+d);const g=a.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(fl).connect(g).connect(a.destination);s.start()}catch(e){}}
+const click=()=>tone(180+Math.random()*120,.07,'square',.05,90),hiss=()=>{noise(1.5,'bandpass',4800,3000,.55);noise(1.5,'highpass',3200,6000,.22);setTimeout(()=>noise(.9,'bandpass',6000,3500,.25),150)},boom=()=>{noise(1.9,'lowpass',1000,50,1);[0,60,150,290,450].forEach(t=>setTimeout(()=>noise(.35,'bandpass',300+Math.random()*700,120,.55),t));tone(70,1.1,'sine',.9,24);tone(150,.5,'sawtooth',.3,40)};
+/* cursors */
+function spawn(){for(let i=0;i<18;i++){const col=`hsl(${i*20} 90% 62%)`,c=document.createElement('div');c.className='cur';c.style.setProperty('--c',col);
+c.innerHTML=`<div class="hm">${P(HP,HM[i%6],i+2)}</div><svg class="ar" viewBox="0 0 12 18"><path d="M1 1v14l4-4 3 7 3-1-3-7h5z" fill="${col}" stroke="#000" stroke-width="1.3"/></svg><span class="lb">${R[i]}</span>`;
+c._x=Math.random()<.5?-120:innerWidth+120;c.style.transform=`translate(${c._x}px,${Math.random()*innerHeight}px)`;document.body.append(c);cs.push(c)}cs[0].offsetWidth}
+function mv(c,x,y,ms=500){const h=c.firstChild;h.style.setProperty('--t',Math.max(-28,Math.min(28,(x-c._x)/6))+'deg');h.classList.add('mv');c.style.transition=skip?'none':`transform ${ms/sp}ms cubic-bezier(.3,.7,.2,1),opacity .5s`;c.style.transform=`translate(${x}px,${y}px)`;c._x=x;return wait(ms).then(()=>{h.classList.remove('mv');h.style.setProperty('--t','0deg')})}
+const nod=c=>{const h=c.firstChild;h.classList.remove('nod');void h.offsetWidth;h.classList.add('nod')};
+const cl=y=>Math.max(24,Math.min(innerHeight-100,y));
+const focus=async b=>{const y=Math.max(0,b.getBoundingClientRect().top+scrollY-120);if(Math.abs(y-scrollY)<4)return;scrollTo({top:y,behavior:skip?'instant':'smooth'});let l=-1,n=0;for(let i=0;i<90&&n<3&&!skip;i++){await wait(16);n=scrollY===l?n+1:0;l=scrollY}if(skip)scrollTo({top:y,behavior:'instant'})};
+async function p1(b,c){const r=b.getBoundingClientRect(),w=document.createElement('div');w.className='wf';w.style.cssText=`left:${r.left+scrollX}px;top:${r.top+scrollY}px`;w.innerHTML=`<em>${Math.round(r.width)} × ${Math.round(r.height)}</em>`;document.body.append(w);b._w=w;w.offsetWidth;
+await mv(c,r.left,cl(r.top),450);w.style.transition=`width ${450/sp}ms,height ${450/sp}ms`;w.style.width=r.width+'px';w.style.height=r.height+'px';w.classList.add('on');
+await mv(c,r.right-6,cl(r.bottom),450);tick();click();nod(c)}
+async function p2(b,c){const r=b.getBoundingClientRect();await mv(c,r.left+24,cl(r.top+Math.min(r.height,160)/2),350);b.classList.add('in');
+if(b.dataset.f){const f=b.dataset.f;for(let i=0;i<f.length&&!skip;i+=8){b.innerHTML=f.slice(0,i)+'<span style="visibility:hidden">'+f.slice(i)+'</span>';if(i%24==0)tone(300+Math.random()*80,.03,'square',.02);await wait(16)}b.textContent=f}
+else b.querySelectorAll('tr,li').forEach((e,i)=>e.style.animationDelay=i*70+'ms');
+if(b._w){const w=b._w;w.classList.add('off');setTimeout(()=>w.remove(),300)}tick();click();nod(c)}
+function reset(){$$('.b').forEach(b=>{b.classList.remove('in');b._w=0;if(b.dataset.f)b.textContent=b.dataset.f});$$('.wf,.cur').forEach(e=>e.remove());cs.length=0;done=0;setL(0);$('#wiki').style.visibility='visible';$$('.sc').forEach(s=>{s.style.opacity=0;setTimeout(()=>s.remove(),1000)})}
+async function build(){const my=++tok;skip=false;
+try{building=true;reset();status('Building');btn.disabled=true;spawn();
+await Promise.all(cs.map((c,i)=>mv(c,50+Math.random()*(innerWidth-170),90+Math.random()*(innerHeight-300),700+i*40)));
+const B=$$('.b');N=B.length;
+for(let i=0;i<N;i+=6){const g=B.slice(i,i+6);await Promise.all([focus(g[0]),mv(cs[i%18],innerWidth-70,innerHeight*.6,500)]);await Promise.all(g.map((b,j)=>p1(b,cs[(i+j)%18])))}
+for(let i=0;i<N;i+=6){const g=B.slice(i,i+6);await Promise.all([focus(g[0]),mv(cs[(i+3)%18],innerWidth-70,innerHeight*.6,500)]);await Promise.all(g.map((b,j)=>p2(b,cs[(i+j+3)%18])))}
+cs.forEach(c=>c.classList.add('wave'));await wait(1400);cs.forEach(c=>c.style.opacity=0);await wait(600);cs.forEach(c=>c.remove());cs.length=0;
+setL(TOT);status('Done');btn.disabled=false;building=false}
+catch(e){if(e!=='x')throw e}}
+/* explosion */
+const rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.random()*a.length|0];
+async function bang(){if(bz||building)return;bz=true;btn.disabled=true;const cr=$('#cr');
+cr.innerHTML=P(CR,CP,7);cr.style.display='block';cr.style.transition='none';cr.style.transform='scale(0)';cr.offsetWidth;
+cr.style.transition='transform .25s cubic-bezier(.3,1.6,.5,1)';cr.style.transform='scale(1)';tone(300,.2,'square',.08,700);await sl(380);
+hiss();cr.style.transition='transform 1.7s ease-in';cr.style.transform='scale(1.7)';
+for(let i=0;i<3;i++){cr.classList.add('fl');await sl(230);cr.classList.remove('fl');await sl(230)}
+await sl(280);cr.style.display='none';boom();setL(0);status('Exploded');
+const W=innerWidth,H=innerHeight;
+document.body.animate([{left:0,top:0},{left:'-16px',top:'10px'},{left:'14px',top:'-12px'},{left:'-10px',top:'-8px'},{left:'8px',top:'9px'},{left:0,top:0}],{duration:700});
+$('#fl').animate([{opacity:1},{opacity:0}],{duration:800});
+const fly=(p,a,d,ms,rot)=>p.animate([{transform:'none',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+160}px) rotate(${rot}deg)`,opacity:0}],{duration:ms,easing:'cubic-bezier(.1,.7,.3,1)',fill:'forwards'}).onfinish=()=>p.remove();
+const COL=['#2b2f2a','#3a3f3a','#58a63f','#7a5a3a','#d9ded6','#1b1e1b','#3e8e34'];
+$$('.b.in').forEach(b=>{const r=b.getBoundingClientRect();if(r.bottom<0||r.top>H)return;const nx=Math.max(1,Math.min(6,Math.ceil(r.width/60))),ny=Math.max(1,Math.min(4,Math.ceil(r.height/60))),w=r.width/nx,h=r.height/ny;
+for(let x=0;x<nx;x++)for(let y=0;y<ny;y++){const p=document.createElement('div'),px=r.left+x*w,py=r.top+y*h;p.className='pc';p.style.cssText=`left:${px}px;top:${py}px;width:${w}px;height:${h}px;background:${pick(COL)}`;document.body.append(p);fly(p,Math.atan2(py-H/2,px-W/2)+rnd(-.5,.5),rnd(300,1000),rnd(1100,1700),rnd(-400,400))}});
+$('#wiki').style.visibility='hidden';
+const PC=['#555','#777','#999','#ff9a1f','#ffd23a','#ff5a1f','#5fc34f','#3e8e34','#ddd'];
+for(let i=0;i<(innerWidth<800?70:140);i++){const p=document.createElement('div'),s=rnd(6,20)|0;p.className='pt';p.style.cssText=`left:${W/2}px;top:${H/2}px;width:${s}px;height:${s}px;background:${pick(PC)}`;document.body.append(p);fly(p,rnd(0,6.3),rnd(100,700),rnd(700,1500),rnd(-300,300))}
+cs.forEach(c=>{const h=c.firstChild,r=h.getBoundingClientRect(),k=h.cloneNode(true);k.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;z-index:96;animation:none`;document.body.append(k);const a=rnd(-3.1,0);fly(k,a,rnd(300,800),1400,rnd(-720,720));h.remove();c.style.transition='transform .9s ease-out,opacity .9s';c.style.transform=`translate(${c._x+rnd(-600,600)}px,${rnd(-300,900)}px) rotate(${rnd(-200,200)}deg)`;c.style.opacity=0;setTimeout(()=>c.remove(),1000)});
+for(let i=0;i<9;i++){const s=document.createElement('div'),z=rnd(110,280);s.className='sc';s.style.cssText=`width:${z}px;height:${z}px;left:${rnd(-30,W-80)}px;top:${rnd(-30,H-80)}px`;document.body.append(s)}
+await sl(2200);bz=false;build()}
+/* ui */
+btn.onclick=bang;
+$('#intro').onclick=()=>{try{ac()}catch(e){}$('#intro').classList.add('gone');build()};
+$('#pp').onclick=e=>{pa=!pa;e.target.textContent=pa?'▶':'❚❚'};
+$('#sp').onclick=e=>{sp=sp==1?2:1;e.target.textContent=sp+'x'};
+$('#sn').onclick=e=>{snd=!snd;e.target.textContent=snd?'🔊':'🔇'};
+$('#sk').onclick=()=>{if(building)skip=true};
+$('#rp').onclick=()=>{if(bz)return;pa=false;$('#pp').textContent='❚❚';$('#intro').classList.add('gone');build()};
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),1800)}
+$$('.toc a').forEach(a=>a.onclick=e=>{e.preventDefault();document.getElementById(a.hash.slice(1)).scrollIntoView({behavior:'smooth',block:'start'})});
+const PG={
+Blocks:{ic:'cube',i:'Blocks are the cubes that make up the Minecraft world. You can mine them, carry them and place them anywhere to build.',s:[['Grass Block','Dirt with a grassy top, found all over the Overworld.'],['Stone','Common underground block that drops cobblestone when mined.'],['Oak Log','Chopped from trees and crafted into planks.'],['Obsidian','Forms when water hits lava. Needs a diamond pickaxe to mine.'],['TNT','Explodes shortly after being lit and destroys nearby blocks.']]},
+Mobs:{ic:'cr',i:'Mobs are the living creatures of Minecraft. Some are friendly, some hostile, and one of them goes boom.',s:[['Creeper','Silent green mob that explodes near players. Tap to go back to its page.'],['Zombie','Hostile mob that burns in sunlight and attacks in groups.'],['Skeleton','Archer that shoots from a distance and also burns in daylight.'],['Enderman','Tall mob that teleports and gets angry if you stare at it.'],['Villager','Peaceful mob you can trade with for useful items.']]},
+Items:{ic:'sword',i:'Items are things you carry in your inventory: tools, weapons, food and materials you use to craft and survive.',s:[['Diamond Sword','Strong melee weapon crafted from diamonds and a stick.'],['Pickaxe','Used to mine stone and ores. Better materials mine faster.'],['Bread','Basic food made from three wheat.'],['Ender Pearl','Thrown to teleport to where it lands.'],['Elytra','Wings that let you glide through the air.']]},
+Biomes:{ic:'tree',i:'Biomes are regions of the world with their own terrain, weather, plants and mobs.',s:[['Plains','Wide, flat grassland with villages and horses.'],['Desert','Hot and dry, with sand, cacti and temples.'],['Jungle','Dense, tall trees, vines and parrots.'],['Cherry Grove','Mountain biome full of pink cherry trees.'],['Deep Dark','Dark underground biome where the Warden lurks. Move quietly.']]},
+Redstone:{ic:'dust',i:'Redstone is Minecraft’s wiring system. Use it to build doors, traps, farms and even working computers.',s:[['Redstone Dust','Carries a signal along the ground for up to 15 blocks.'],['Lever','Switch that stays on or off until you flip it again.'],['Piston','Pushes blocks when it receives a signal.'],['Repeater','Delays a signal and boosts it back to full strength.'],['Observer','Fires a pulse when the block in front of it changes.']]}};
+const closePg=()=>$('#pg').classList.remove('on');
+function openPg(n){const d=PG[n],o=$('#pg'),ic=P(...IC[d.ic],3);
+o.innerHTML=`<div class="pgi"><button id="pgx" class="pgb bv px">← Back</button><div class="pgt">${ic}<h1>${n}</h1></div><p>${d.i}</p><h2>Notable entries</h2><div class="dt"><table>${d.s.map(r=>`<tr><td><i class="ic">${ic}</i>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table></div><h2>See also</h2><div class="cards">${Object.keys(PG).filter(k=>k!=n).map(k=>`<a class="card" href="#" data-p="${k}"><b>${k}</b></a>`).join('')}<a class="card" href="#" data-p=""><b>Creeper</b></a></div></div>`;
+$('#pgx').onclick=closePg;o.querySelectorAll('[data-p]').forEach(a=>a.onclick=e=>{e.preventDefault();a.dataset.p?openPg(a.dataset.p):closePg()});o.scrollTop=0;o.classList.add('on');click()}
+$$('.card').forEach(a=>a.onclick=e=>{e.preventDefault();openPg(a.dataset.l)});
+addEventListener('keydown',e=>{if(e.key=='Escape')closePg()});
+$('#q').onkeydown=e=>{if(e.key!='Enter')return;const q=e.target.value.trim().toLowerCase();if(!q)return;const t=$$('.t').find(x=>x.dataset.f.toLowerCase().includes(q));if(!t)return toast('No match for “'+e.target.value+'”');t.scrollIntoView({behavior:'smooth',block:'center'});t.classList.add('hit');setTimeout(()=>t.classList.remove('hit'),1800)};
+</script></body></html>
