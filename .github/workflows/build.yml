@@ -1,0 +1,337 @@
+
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # 3. Android SDK
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: false
+
+      # 4. Accept licenses
+      - name: Accept Android SDK licenses
+        shell: bash
+        run: |
+          set +o pipefail
+          yes | sdkmanager --licenses
+          echo "SDK licenses accepted!"
+
+      # 5. Install SDK packages
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0"
+
+      # 6. ImageMagick
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+
+      # 7. Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      # 8. Generate Android project
+      - name: Generate Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          HTML=$(find . -maxdepth 1 -type f -name '*.html' | head -n 1)
+          ICON="icon.png"
+
+          if [ -z "$HTML" ]; then
+            echo "ERROR: HTML file not found!"
+            exit 1
+          fi
+
+          if [ ! -f "$ICON" ]; then
+            echo "ERROR: icon.png not found in repository root!"
+            exit 1
+          fi
+
+          mkdir -p proj/app/src/main/assets
+          mkdir -p proj/app/src/main/java/app/mcwiki/com
+          mkdir -p proj/app/src/main/res/values
+
+          cp "$HTML" proj/app/src/main/assets/index.html
+
+          # Generate launcher icons
+          declare -A SIZES=(
+            [mdpi]=48
+            [hdpi]=72
+            [xhdpi]=96
+            [xxhdpi]=144
+            [xxxhdpi]=192
+          )
+
+          for density in "${!SIZES[@]}"; do
+            size="${SIZES[$density]}"
+
+            mkdir -p "proj/app/src/main/res/mipmap-$density"
+
+            convert "$ICON" \
+              -resize "${size}x${size}" \
+              -gravity center \
+              -extent "${size}x${size}" \
+              -strip \
+              "proj/app/src/main/res/mipmap-$density/ic_launcher.png"
+          done
+
+          cd proj
+
+          # Root Gradle
+          cat > build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application' version '8.5.2' apply false
+          }
+          EOF
+
+          # Settings
+          cat > settings.gradle <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+
+          rootProject.name = 'MinecraftWiki'
+          include ':app'
+          EOF
+
+          # Gradle properties
+          cat > gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2048m
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          EOF
+
+          # App Gradle
+          cat > app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'app.mcwiki.com'
+              compileSdk 34
+
+              defaultConfig {
+                  applicationId 'app.mcwiki.com'
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0.0'
+              }
+
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                  }
+              }
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'androidx.core:core:1.13.1'
+          }
+          EOF
+
+          # Android Manifest
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET" />
+
+              <application
+                  android:allowBackup="true"
+                  android:label="@string/app_name"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
+                  android:theme="@style/AppTheme"
+                  android:hardwareAccelerated="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+
+                  </activity>
+
+              </application>
+          </manifest>
+          EOF
+
+          # MainActivity
+          cat > app/src/main/java/app/mcwiki/com/MainActivity.java <<'EOF'
+          package app.mcwiki.com;
+
+          import android.graphics.Color;
+          import android.os.Bundle;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          import androidx.appcompat.app.AppCompatActivity;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+
+          public class MainActivity extends AppCompatActivity {
+
+              private WebView web;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+
+                  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+                  web = new WebView(this);
+                  web.setBackgroundColor(Color.rgb(15, 17, 15));
+
+                  WebSettings settings = web.getSettings();
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setMediaPlaybackRequiresUserGesture(false);
+                  settings.setSupportZoom(false);
+                  settings.setBuiltInZoomControls(false);
+
+                  web.setWebViewClient(new WebViewClient());
+                  web.setWebChromeClient(new WebChromeClient());
+
+                  setContentView(web);
+
+                  web.loadUrl("file:///android_asset/index.html");
+
+                  goFullscreen();
+              }
+
+              private void goFullscreen() {
+                  WindowInsetsControllerCompat controller =
+                      new WindowInsetsControllerCompat(
+                          getWindow(),
+                          getWindow().getDecorView()
+                      );
+
+                  controller.hide(WindowInsetsCompat.Type.systemBars());
+
+                  controller.setSystemBarsBehavior(
+                      WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                  );
+              }
+
+              @Override
+              public void onWindowFocusChanged(boolean hasFocus) {
+                  super.onWindowFocusChanged(hasFocus);
+                  if (hasFocus) goFullscreen();
+              }
+
+              @Override
+              protected void onPause() {
+                  super.onPause();
+                  web.onPause();
+              }
+
+              @Override
+              protected void onResume() {
+                  super.onResume();
+                  web.onResume();
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (web.canGoBack()) {
+                      web.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+
+              @Override
+              protected void onDestroy() {
+                  web.destroy();
+                  super.onDestroy();
+              }
+          }
+          EOF
+
+          # App name and theme
+          cat > app/src/main/res/values/strings.xml <<'EOF'
+          <resources>
+              <string name="app_name">Minecraft Wiki</string>
+          </resources>
+          EOF
+
+          cat > app/src/main/res/values/styles.xml <<'EOF'
+          <resources>
+              <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+                  <item name="android:windowBackground">#0F110F</item>
+                  <item name="android:navigationBarColor">#0F110F</item>
+                  <item name="android:statusBarColor">#0F110F</item>
+              </style>
+          </resources>
+          EOF
+
+      # 9. Build APK
+      - name: Build APK
+        run: |
+          cd proj
+          gradle assembleDebug --no-daemon --stacktrace
+
+      # 10. Upload APK
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraft-wiki-apk
+          path: proj/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
