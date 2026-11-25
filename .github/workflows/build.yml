@@ -1,0 +1,201 @@
+name: Build APK
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+      - name: Generate Android project around your HTML
+        run: |
+          set -e
+          HTML=$(ls *.html 2>/dev/null | head -n1)
+          [ -n "$HTML" ] || { echo "No .html file found in the repo root"; exit 1; }
+          mkdir -p proj/app/src/main/assets
+          cp "$HTML" proj/app/src/main/assets/index.html
+          cd proj
+          mkdir -p app
+          cat > app/build.gradle <<'EOF_0'
+          plugins { id 'com.android.application' }
+          android {
+              namespace 'app.mcwiki.com'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "app.mcwiki.com"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0.0"
+              }
+              buildTypes { release { minifyEnabled false } }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' }
+          EOF_0
+          mkdir -p app/src/main
+          cat > app/src/main/AndroidManifest.xml <<'EOF_1'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <application
+                  android:allowBackup="true"
+                  android:icon="@drawable/ic_launcher"
+                  android:label="@string/app_name"
+                  android:hardwareAccelerated="true"
+                  android:theme="@style/AppTheme">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF_1
+          mkdir -p app/src/main/java/app/mcwiki/com
+          cat > app/src/main/java/app/mcwiki/com/MainActivity.java <<'EOF_2'
+          package app.mcwiki.com;
+
+          import android.graphics.Color;
+          import android.os.Bundle;
+          import android.view.WindowManager;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import androidx.appcompat.app.AppCompatActivity;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+
+          public class MainActivity extends AppCompatActivity {
+              private WebView web;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                  setContentView(R.layout.activity_main);
+                  web = findViewById(R.id.webView);
+                  web.setBackgroundColor(Color.parseColor("#0F110F"));
+                  WebSettings s = web.getSettings();
+                  s.setJavaScriptEnabled(true);
+                  s.setDomStorageEnabled(true);
+                  s.setMediaPlaybackRequiresUserGesture(false);
+                  s.setSupportZoom(false);
+                  s.setBuiltInZoomControls(false);
+                  web.setWebViewClient(new WebViewClient());
+                  web.setWebChromeClient(new WebChromeClient());
+                  web.loadUrl("file:///android_asset/index.html");
+                  goFullscreen();
+              }
+
+              private void goFullscreen() {
+                  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+                  WindowInsetsControllerCompat c = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+                  c.hide(WindowInsetsCompat.Type.systemBars());
+                  c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+              }
+
+              @Override
+              public void onWindowFocusChanged(boolean hasFocus) {
+                  super.onWindowFocusChanged(hasFocus);
+                  if (hasFocus) goFullscreen();
+              }
+
+              @Override protected void onPause() { super.onPause(); web.onPause(); }
+              @Override protected void onResume() { super.onResume(); web.onResume(); }
+          }
+          EOF_2
+          mkdir -p app/src/main/res/drawable
+          cat > app/src/main/res/drawable/ic_launcher.xml <<'EOF_3'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="96dp" android:height="96dp" android:viewportWidth="10" android:viewportHeight="10">
+              <path android:fillColor="#0F110F" android:pathData="M0,0h10v10h-10z"/>
+              <path android:fillColor="#4CAF3F" android:pathData="M1,1h8v8h-8z"/>
+              <path android:fillColor="#3E8E34" android:pathData="M1,1h2v1h-2zM6,3h2v1h-2zM2,6h1v2h-1zM7,6h2v1h-2z"/>
+              <path android:fillColor="#76D062" android:pathData="M4,1h2v1h-2zM1,4h1v2h-1zM7,8h2v1h-2z"/>
+              <path android:fillColor="#0B0D0B" android:pathData="M2,2h2v2h-2zM6,2h2v2h-2zM4,4h2v1h-2zM3,5h4v2h-4zM3,7h1v1h-1zM6,7h1v1h-1z"/>
+          </vector>
+          EOF_3
+          mkdir -p app/src/main/res/layout
+          cat > app/src/main/res/layout/activity_main.xml <<'EOF_4'
+          <?xml version="1.0" encoding="utf-8"?>
+          <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#0F110F">
+              <WebView
+                  android:id="@+id/webView"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent" />
+          </FrameLayout>
+          EOF_4
+          mkdir -p app/src/main/res/values
+          cat > app/src/main/res/values/strings.xml <<'EOF_5'
+          <resources>
+              <string name="app_name">Minecraft Wiki</string>
+          </resources>
+          EOF_5
+          cat > app/src/main/res/values/styles.xml <<'EOF_6'
+          <resources>
+              <color name="bg">#0F110F</color>
+              <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+                  <item name="android:windowBackground">@color/bg</item>
+                  <item name="android:statusBarColor">@color/bg</item>
+                  <item name="android:navigationBarColor">@color/bg</item>
+              </style>
+          </resources>
+          EOF_6
+          cat > build.gradle <<'EOF_7'
+          plugins {
+              id 'com.android.application' version '8.5.2' apply false
+          }
+          EOF_7
+          cat > gradle.properties <<'EOF_8'
+          org.gradle.jvmargs=-Xmx2048m
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          EOF_8
+          mkdir -p gradle/wrapper
+          cat > gradle/wrapper/gradle-wrapper.properties <<'EOF_9'
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          EOF_9
+          cat > settings.gradle <<'EOF_10'
+          pluginManagement {
+              repositories { google(); mavenCentral(); gradlePluginPortal() }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories { google(); mavenCentral() }
+          }
+          rootProject.name = 'MinecraftWiki'
+          include ':app'
+          EOF_10
+          cd ..
+      - name: Build
+        run: cd proj && gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: minecraft-wiki-apk
+          path: proj/app/build/outputs/apk/debug/app-debug.apk
